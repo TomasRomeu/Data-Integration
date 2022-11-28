@@ -1,0 +1,131 @@
+SELECT 
+	N.id_notas,
+	N.id_alumno,
+	A.nombre,
+	A.apellido1,
+	N.id_asignatura,
+	N.id_curso_escolar,
+	N.nota01,
+	N.nota02,
+	N.nota03,
+	N.notaFinal,
+	N.estadoAcademico
+INTO [AUXILIARES].[dbo].Aux_Notas
+FROM [SRC].[dbo].[NOTAS_FINALES] as N
+JOIN [SRC].[dbo].alumno as A on A.id = N.id_alumno;
+
+/
+/
+
+SELECT 
+	AUX1.id_notas,
+	AUX1.id_alumno,
+	AUX1.nombre AS Alumno_Nombre,
+	AUX1.apellido1 AS Alumno_Apellido,
+	AUX1.id_asignatura,
+	AUX1.id_curso_escolar,
+	AUX1.nota01,
+	AUX1.nota02,
+	AUX1.nota03,
+	AUX1.notaFinal,
+	AUX1.estadoAcademico
+INTO [AUXILIARES].[dbo].Aux_Notas2
+FROM [AUXILIARES].[dbo].Aux_Notas as AUX1
+JOIN [SRC].[dbo].alumno_se_matricula_asignatura as AMA on AMA.id_alumno = AUX1.id_alumno
+
+/
+/
+
+SELECT AUX2.id_notas,
+	AUX2.id_alumno,
+	AUX2.Alumno_Nombre,
+	AUX2.Alumno_Apellido,
+	AUX2.id_asignatura,
+	AUX2.id_curso_escolar,
+	AUX2.nota01,
+	AUX2.nota02,
+	AUX2.nota03,
+	AUX2.notaFinal,
+	AUX2.estadoAcademico,
+	CAST(CE.anyo_inicio AS INT) AS ANYO_INICIO ,
+	CAST(CE.anyo_fin AS INT) AS ANYO_FIN
+ INTO [AUXILIARES].[dbo].Aux_Notas3
+ FROM [AUXILIARES].[dbo].[Aux_Notas2] AS AUX2
+ JOIN [SRC].[dbo].[curso_escolar] AS CE ON AUX2.id_curso_escolar = CE.id;
+
+ /
+ /
+
+ SELECT  
+	AUX3.id_notas,
+	AUX3.Alumno_Nombre,
+	AUX3.Alumno_Apellido,
+	ASG.nombre AS ASIGNATURA,
+	AUX3.id_curso_escolar,
+	AUX3.nota01,
+	AUX3.nota02,
+	AUX3.nota03,
+	AUX3.notaFinal,
+	AUX3.estadoAcademico,
+	AUX3.ANYO_INICIO,
+	AUX3.ANYO_FIN
+  INTO [AUXILIARES].[dbo].Aux_Notas4
+ FROM [AUXILIARES].[dbo].[Aux_Notas3] AS AUX3
+ JOIN [SRC].[dbo].[asignatura] AS ASG ON AUX3.id_asignatura = ASG.id;
+
+ /
+ /
+
+ SELECT DISTINCT
+	AUX4.id_notas,
+	AUX4.Alumno_Nombre,
+	AUX4.Alumno_Apellido,
+	AUX4.ASIGNATURA,
+	AUX4.id_curso_escolar,
+	AUX4.nota01,
+	AUX4.nota02,
+	AUX4.nota03,
+	AUX4.notaFinal,
+	AUX4.estadoAcademico,
+	AUX4.ANYO_INICIO,
+	AUX4.ANYO_FIN
+ INTO [AUXILIARES].[dbo].Aux_Notas5
+ FROM [AUXILIARES].[dbo].[Aux_Notas4] AS AUX4
+
+ /
+ /
+INSERT INTO [STG].[dbo].[Estado_Academico]
+SELECT 
+	AUX5.id_notas,
+	AUX5.Alumno_Nombre,
+	AUX5.Alumno_Apellido,
+	AUX5.ASIGNATURA,
+	AUX5.id_curso_escolar,
+	AUX5.nota01,
+	AUX5.nota02,
+	AUX5.nota03,
+	AUX5.notaFinal,
+	AUX5.estadoAcademico,
+	AUX5.ANYO_INICIO,
+	AUX5.ANYO_FIN
+FROM [AUXILIARES].[dbo].[Aux_Notas5] AS AUX5
+
+/
+/
+-- ACD
+
+INSERT INTO [ACD].[dbo].[Estado_Academico]
+SELECT DISTINCT 
+	STG.id_notas,
+	STG.Alumno_Nombre,
+	STG.Alumno_Apellido,
+	STG.ASIGNATURA,
+	STG.id_curso_escolar,
+	STG.nota01,
+	STG.nota02,
+	STG.nota03,
+	STG.notaFinal,
+	STG.estadoAcademico,
+	STG.ANYO_INICIO,
+	STG.ANYO_FIN
+FROM [STG].[dbo].[Estado_Academico] AS STG

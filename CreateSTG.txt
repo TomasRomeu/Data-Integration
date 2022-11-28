@@ -1,0 +1,103 @@
+CREATE TABLE departamento (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE alumno (
+    id INT PRIMARY KEY,
+    nif VARCHAR(9),
+    nombre VARCHAR(25) NOT NULL,
+    apellido1 VARCHAR(50) NOT NULL,
+    apellido2 VARCHAR(50),
+    ciudad VARCHAR(25) NOT NULL,
+    direccion VARCHAR(50) NOT NULL,
+    telefono VARCHAR(9),
+    fecha_nacimiento DATE NOT NULL,
+    sexo varchar(5) NOT NULL
+);
+ 
+CREATE TABLE profesor (
+    id INT PRIMARY KEY,
+    nif VARCHAR(9),
+    nombre VARCHAR(25) NOT NULL,
+    apellido1 VARCHAR(50) NOT NULL,
+    apellido2 VARCHAR(50),
+    ciudad VARCHAR(25) NOT NULL,
+    direccion VARCHAR(50) NOT NULL,
+    telefono VARCHAR(9),
+    fecha_nacimiento DATE NOT NULL,
+    sexo varchar(5) NOT NULL,
+    id_departamento INT NOT NULL,
+    FOREIGN KEY (id_departamento) REFERENCES departamento(id)
+);
+ 
+CREATE TABLE grado (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+ 
+ CREATE TABLE asignatura (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    creditos FLOAT  NOT NULL,
+    tipo varchar(20) NOT NULL,
+    curso TINYINT  NOT NULL,
+    cuatrimestre TINYINT  NOT NULL,
+    id_profesor INT ,
+    id_grado INT  NOT NULL,
+    FOREIGN KEY(id_profesor) REFERENCES profesor(id),
+    FOREIGN KEY(id_grado) REFERENCES grado(id)
+);
+ 
+CREATE TABLE curso_escolar (
+    id INT PRIMARY KEY,
+    anyo_inicio smalldatetime NOT NULL,
+    anyo_fin smalldatetime NOT NULL
+);
+
+CREATE TABLE alumno_se_matricula_asignatura (
+    id_alumno INT NOT NULL,
+    id_asignatura INT  NOT NULL,
+    id_curso_escolar INT  NOT NULL,
+    PRIMARY KEY (id_alumno, id_asignatura, id_curso_escolar),
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id),
+    FOREIGN KEY (id_asignatura) REFERENCES asignatura(id),
+    FOREIGN KEY (id_curso_escolar) REFERENCES curso_escolar(id)
+);
+
+--Iba a hacer una tabla que sea estado academico, pero despues me di cuenta que la podia poner directamente como una columna dentro de la tabla notas
+
+CREATE TABLE [STG].[dbo].[Estado_Academico]
+(
+	id_notas int not null,
+	Alumno_Nombre varchar(25) not null,
+	Alumno_Apellido varchar(25) not null,
+	ASIGNATURA varchar(100) not null,
+	id_curso_escolar int not null,
+	nota01 int not null,
+	nota02 int not null,
+	nota03 int not null,
+	notaFinal int not null,
+	estadoAcademico varchar(12) not null,
+	ANYO_INICIO int not null,
+	ANYO_FIN int not null
+);
+
+--
+--ACD
+
+CREATE TABLE [ACD].[dbo].[Estado_Academico]
+(
+	id_notas int not null,
+	Alumno_Nombre varchar(25) not null,
+	Alumno_Apellido varchar(25) not null,
+	ASIGNATURA varchar(100) not null,
+	id_curso_escolar int not null,
+	nota01 int not null,
+	nota02 int not null,
+	nota03 int not null,
+	notaFinal int not null,
+	estadoAcademico varchar(12) not null,
+	ANYO_INICIO int not null,
+	ANYO_FIN int not null
+);
